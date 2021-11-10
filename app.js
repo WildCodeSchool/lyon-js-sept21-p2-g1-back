@@ -12,8 +12,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get('/myCollection', (req, res) => {
-  console.log('handling /myroute');
+app.get('/users', (req, res) => {
+  console.log('users/http://localhost:5000/users');
   res.send(users);
 });
 
