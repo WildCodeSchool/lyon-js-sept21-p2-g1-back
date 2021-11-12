@@ -1,15 +1,22 @@
 const express = require('express');
+const uniqid = require('uniqid');
+const cors = require('cors');
 
 const app = express();
 
-const items = [
-  { id: 1, name: 'item1' },
-  { id: 2, name: 'item2' },
+app.use(express.json());
+app.use(cors());
+// Place Fake pour faire du contenu
+
+const places = [
+  { id: uniqid(), user: 'Manon', lat: 45.761629, lon: 4.833033 },
+  { id: uniqid(), name: 'Tiphaine', lat: 45.76951, lon: 4.867913 },
+  { id: uniqid(), name: 'Thibault', lat: 45.725213, lon: 4.884782 },
 ];
 
-app.get('/myCollection', (req, res) => {
-  console.log('handling /myroute');
-  res.send(items);
+//
+app.get('/placesFree', (req, res) => {
+  res.send(places);
 });
 
-app.listen(5000, () => console.log('server listening on port 5000'));
+app.listen(5001, () => console.log('server listening on port 5001'));
