@@ -1,22 +1,53 @@
+const connection = require('./db-config');
 const express = require('express');
-const uniqid = require('uniqid');
-const cors = require('cors');
-
 const app = express();
 
-app.use(express.json());
-app.use(cors());
+const port = process.env.SERVER_PORT || 3000;
+
+// const uniqid = require('uniqid');
+
 // Place Fake pour faire du contenu
 
-const places = [
-  { id: uniqid(), user: 'Manon', lat: 45.761629, lon: 4.833033 },
-  { id: uniqid(), name: 'Tiphaine', lat: 45.76951, lon: 4.867913 },
-  { id: uniqid(), name: 'Thibault', lat: 45.725213, lon: 4.884782 },
-];
-
-//
-app.get('/placesFree', (req, res) => {
-  res.send(places);
+// verification de la connexion à la database
+connection.connect((err) => {
+  if (err) {
+    console.error(`error connecting:  ${err.stack}`);
+  } else {
+    console.log(`connected to db + ${connection.threadId}`);
+  }
 });
 
-app.listen(5001, () => console.log('server listening on port 5001'));
+// pour qu'express puisse lire le json
+app.use(express.json());
+
+// recuperer données de la database
+app.get('/api/placeFree', (req, resp) => {
+  connection.query('SELECT * FROM placesFree', (err, result) => {
+    if (err) {
+      resp.status(500).send('error retrieving data');
+    } else {
+      resp.status(200).json(result);
+    }
+  });
+});
+
+// We listen to incoming request on the port defined above
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+
+// route pour créer une nouvelle entrée dans movies
+app.post('/api/placeFree', (req, resp) => {
+  const { name, lat, lon, img } = req.body;
+  connection.query(
+    'INSERT INTO placesFree(name, lat, lon, img, ) VALUES (?, ?, ?, ?, ?)',
+    [name, lat, lon, img],
+    (err, result) => {
+      if (err) {
+        resp.status(500).send('error');
+      } else {
+        resp.status(201).send('new entry saved');
+      }
+    }
+  );
+});
