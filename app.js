@@ -1,53 +1,47 @@
-const connection = require('./db-config');
 const express = require('express');
-const app = express();
-
-const port = process.env.SERVER_PORT || 3000;
-
-// const uniqid = require('uniqid');
+const uniqid = require('uniqid');
+const cors = require('cors');
 
 // Place Fake pour faire du contenu
 
-// verification de la connexion à la database
-connection.connect((err) => {
-  if (err) {
-    console.error(`error connecting:  ${err.stack}`);
-  } else {
-    console.log(`connected to db + ${connection.threadId}`);
-  }
-});
+const places = [
+  {
+    id: uniqid(),
+    user: 'Selena',
+    lat: 45.761629,
+    lon: 4.833033,
+    img: 'https://ucarecdn.com/f9ba07c4-b7f2-4077-8840-c51623434a7e/sajadnorixIjpx2dWbu8unsplash.jpg',
+  },
+  {
+    id: uniqid(),
+    name: 'Kalil',
+    lat: 45.76951,
+    lon: 4.867913,
+    img: 'https://ucarecdn.com/d43eae4d-3722-44bb-9a74-c3d9eb658e7c/rafaljedrzejek5LROvubqo4unsplash.jpg',
+  },
+  {
+    id: uniqid(),
+    name: 'Florence',
+    lat: 45.725213,
+    lon: 4.884782,
+    img: 'https://ucarecdn.com/3c74ecb5-4829-4b3f-a5cb-38db425f22c5/dngphchitriuhfDv8pW_uvsunsplash.jpg',
+  },
+  {
+    id: uniqid(),
+    name: 'Bastien',
+    lat: 45.775715,
+    lon: 4.882494,
+    img: 'https://ucarecdn.com/6f125b16-cfdf-40ff-b495-f59eb5393cf6/fernandogagonfGQr5ogRPsunsplash.jpg',
+  },
+];
 
-// pour qu'express puisse lire le json
+const app = express();
+
 app.use(express.json());
+app.use(cors());
 
-// recuperer données de la database
-app.get('/api/placeFree', (req, resp) => {
-  connection.query('SELECT * FROM placesFree', (err, result) => {
-    if (err) {
-      resp.status(500).send('error retrieving data');
-    } else {
-      resp.status(200).json(result);
-    }
-  });
+app.get('/placesFree', (req, res) => {
+  res.send(places);
 });
 
-// We listen to incoming request on the port defined above
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
-
-// route pour créer une nouvelle entrée dans movies
-app.post('/api/placeFree', (req, resp) => {
-  const { name, lat, lon, img } = req.body;
-  connection.query(
-    'INSERT INTO placesFree(name, lat, lon, img, ) VALUES (?, ?, ?, ?, ?)',
-    [name, lat, lon, img],
-    (err, result) => {
-      if (err) {
-        resp.status(500).send('error');
-      } else {
-        resp.status(201).send('new entry saved');
-      }
-    }
-  );
-});
+app.listen(3000, () => console.log('server listening on port 3000'));
