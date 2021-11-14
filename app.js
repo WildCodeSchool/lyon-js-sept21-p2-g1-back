@@ -3,8 +3,10 @@ const uniqid = require('uniqid');
 const cors = require('cors');
 
 const users = [
-  { id: 1, name: 'user1', message: 'message 1' },
-  { id: 2, name: 'user2', message: 'message 2' },
+  { id: 1, name: 'Séléna', message: '...les chats sont acceptés ?' },
+  { id: 2, name: 'Bastien', message: 'très fonctionnel, top! ' },
+  { id: 2, name: 'Kahlil', message: 'facile de trouver une place, merci :)' },
+  { id: 2, name: 'Florence', message: 'design sympa, merci les dev ;)' },
 ];
 
 const app = express();
