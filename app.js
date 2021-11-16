@@ -92,18 +92,19 @@ ratingsRouter.patch('/:id', (req, res) => {
     note: Joi.number().min(0),
   }).validate(req.body, { abortEarly: false });
 
-  if (validationErrors)
-    return res.status(422).json({ errors: validationErrors.details });
-
-  connection.promise()
-    .query('UPDATE ratings SET ? WHERE id = ?', [req.body, req.params.id])
-    .then(([result]) => {
-      res.sendStatus(200);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.sendStatus(500);
-    });
+  if (validationErrors) {
+    res.status(422).json({ errors: validationErrors.details });
+  } else {
+    connection.promise()
+      .query('UPDATE ratings SET ? WHERE id = ?', [req.body, req.params.id])
+      .then(() => {
+        res.sendStatus(200);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.sendStatus(500);
+      });
+  }
 });
 
 
