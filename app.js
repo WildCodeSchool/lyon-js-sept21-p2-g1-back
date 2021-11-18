@@ -101,8 +101,8 @@ streetParkingSpotsRouter.post('/', (req, res) => {
   const { userName, lat, lon, img } = req.body;
   const { error: validationErrors } = Joi.object({
     userName: Joi.string().max(255).required(),
-    lat: Joi.number().min(5).required(),
-    lon: Joi.number().min(5).required(),
+    lat: Joi.number().min(0).required(),
+    lon: Joi.number().min(0).required(),
     img: Joi.string().max(255).required(),
   }).validate({ userName, lat, lon, img }, { abortEarly: false });
   if (validationErrors) {
