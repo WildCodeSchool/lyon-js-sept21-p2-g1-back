@@ -1,9 +1,11 @@
 const express = require('express');
 const Joi = require('joi');
+const cors = require('cors');
 const connection = require('./db');
 
 const serverPort = process.env.PORT || 5001;
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const ratingsRouter = express.Router();
@@ -18,7 +20,9 @@ connection.connect((err) => {
 });
 
 ratingsRouter.get('/', (req, res) => {
-  connection.promise().query('SELECT * FROM ratings')
+  connection
+    .promise()
+    .query('SELECT * FROM ratings')
     .then(([results]) => {
       res.json(results);
     })
@@ -76,12 +80,20 @@ ratingsRouter.post('/', (req, res) => {
   if (validationErrors) {
     res.status(422).json({ errors: validationErrors.details });
   } else {
-    connection.promise()
-      .query('INSERT INTO ratings (name, message, note) VALUES (?, ?, ?)', [name, message, note])
+    connection
+      .promise()
+      .query('INSERT INTO ratings (name, message, note) VALUES (?, ?, ?)', [
+        name,
+        message,
+        note,
+      ])
       .then(([result]) => {
         res.send({ id: result.insertId, name, message, note });
-
-      }).catch((err) => { console.error(err); res.sendStatus(500); });
+      })
+      .catch((err) => {
+        console.error(err);
+        res.sendStatus(500);
+      });
   }
 });
 
@@ -111,7 +123,6 @@ streetParkingSpotsRouter.post('/', (req, res) => {
         res.sendStatus(500);
       });
   }
-
 });
 
 ratingsRouter.patch('/:id', (req, res) => {
@@ -123,20 +134,22 @@ ratingsRouter.patch('/:id', (req, res) => {
   if (validationErrors) {
     res.status(422).json({ errors: validationErrors.details });
   } else {
-    connection.promise()
+    connection
+      .promise()
       .query('UPDATE ratings SET ? WHERE id = ?', [req.body, req.params.id])
       .then(() => {
         res.sendStatus(200);
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.error(err);
         res.sendStatus(500);
       });
   }
 });
 
-
 ratingsRouter.delete('/:id', (req, res) => {
-  connection.promise()
+  connection
+    .promise()
     .query('DELETE FROM ratings WHERE id = ?', [req.params.id])
     .then(([result]) => {
       if (result.affectedRows) res.sendStatus(204);
@@ -149,4 +162,3 @@ ratingsRouter.delete('/:id', (req, res) => {
 });
 
 app.listen(serverPort);
-
