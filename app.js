@@ -1,9 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const Joi = require('joi');
 const connection = require('./db');
 
+
 const serverPort = process.env.PORT || 5001;
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const ratingsRouter = express.Router();
@@ -71,7 +74,7 @@ ratingsRouter.post('/', (req, res) => {
   const { error: validationErrors } = Joi.object({
     name: Joi.string().max(255).required(),
     message: Joi.string().max(65535).required(),
-    note: Joi.number().min(0).required(),
+    note: Joi.number().min(2).required(),
   }).validate({ name, message, note }, { abortEarly: false });
   if (validationErrors) {
     res.status(422).json({ errors: validationErrors.details });
